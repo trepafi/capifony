@@ -118,12 +118,12 @@ namespace :symfony do
         capifony_pretty_print "--> Downloading Composer to temp location"
         run_locally "cd #{$temp_destination} && curl -s http://getcomposer.org/installer | #{php_bin}"
       else
-        if !remote_file_exists?("#{latest_release}/composer.phar")
-          capifony_pretty_print "--> Downloading Composer"
+        if !remote_file_exists?("#{latest_release}#{release_subfolder}/composer.phar")
+          capifony_pretty_print "--> Downloading Composer by Lt."
 
           run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && curl -s http://getcomposer.org/installer | #{php_bin}'"
         else
-          capifony_pretty_print "--> Updating Composer"
+          capifony_pretty_print "--> Updating Composer by Lt."
 
           run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && #{php_bin} composer.phar self-update'"
         end
