@@ -121,11 +121,11 @@ namespace :symfony do
         if !remote_file_exists?("#{latest_release}/composer.phar")
           capifony_pretty_print "--> Downloading Composer"
 
-          run "#{try_sudo} sh -c 'cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}'"
+          run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && curl -s http://getcomposer.org/installer | #{php_bin}'"
         else
           capifony_pretty_print "--> Updating Composer"
 
-          run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} composer.phar self-update'"
+          run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && #{php_bin} composer.phar self-update'"
         end
       end
       capifony_puts_ok
@@ -153,7 +153,7 @@ namespace :symfony do
         capifony_puts_ok
       else
         capifony_pretty_print "--> Installing Composer dependencies"
-        run "#{try_sudo} sh -c 'cd #{latest_release} && SYMFONY_ENV=#{symfony_env_prod} #{composer_bin} install #{options}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && SYMFONY_ENV=#{symfony_env_prod} #{composer_bin} install #{options}'"
         capifony_puts_ok
       end
     end
@@ -171,7 +171,7 @@ namespace :symfony do
       end
 
       capifony_pretty_print "--> Updating Composer dependencies"
-      run "#{try_sudo} sh -c 'cd #{latest_release} && SYMFONY_ENV=#{symfony_env_prod} #{composer_bin} update #{options}'"
+      run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && SYMFONY_ENV=#{symfony_env_prod} #{composer_bin} update #{options}'"
       capifony_puts_ok
     end
 
