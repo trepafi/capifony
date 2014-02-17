@@ -3,7 +3,7 @@ namespace :symfony do
   task :default, :roles => :app, :except => { :no_release => true } do
     prompt_with_default(:task_arguments, "cache:clear")
 
-    stream "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{task_arguments} #{console_options}'"
+    stream "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && #{php_bin} #{symfony_console} #{task_arguments} #{console_options}'"
   end
 
 
@@ -47,7 +47,7 @@ namespace :symfony do
         install_options += " --relative"
       end
 
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{assets_install_path}#{install_options} #{console_options}'"
+      run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && #{php_bin} #{symfony_console} assets:install #{assets_install_path}#{install_options} #{console_options}'"
       capifony_puts_ok
     end
   end
@@ -57,7 +57,7 @@ namespace :symfony do
     task :dump, :roles => :app,  :except => { :no_release => true } do
       capifony_pretty_print "--> Dumping all assets to the filesystem"
 
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump #{console_options}'"
+      run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && #{php_bin} #{symfony_console} assetic:dump #{console_options}'"
       capifony_puts_ok
     end
   end
@@ -76,7 +76,7 @@ namespace :symfony do
           cmd = "update"
         end
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_vendors} #{cmd}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && #{php_bin} #{symfony_vendors} #{cmd}'"
         capifony_puts_ok
       end
     end
@@ -100,9 +100,9 @@ namespace :symfony do
 
         if !remote_file_exists?("#{latest_release}/#{build_bootstrap}") && true == use_composer then
           set :build_bootstrap, "vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php"
-          run "#{try_sudo} sh -c 'cd #{latest_release} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} #{app_path} || echo '#{build_bootstrap} not found, skipped''"
+          run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} #{app_path} || echo '#{build_bootstrap} not found, skipped''"
         else
-          run "#{try_sudo} sh -c 'cd #{latest_release} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} || echo '#{build_bootstrap} not found, skipped''"
+          run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} || echo '#{build_bootstrap} not found, skipped''"
         end
       end
       capifony_puts_ok
@@ -118,12 +118,12 @@ namespace :symfony do
         capifony_pretty_print "--> Downloading Composer to temp location"
         run_locally "cd #{$temp_destination} && curl -s http://getcomposer.org/installer | #{php_bin}"
       else
-        if !remote_file_exists?("#{latest_release}#{release_subfolder}/composer.phar")
-          capifony_pretty_print "--> Downloading Composer by Lt."
+        if !remote_file_exists?("#{latest_release}/composer.phar")
+          capifony_pretty_print "--> Downloading Composer"
 
           run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && curl -s http://getcomposer.org/installer | #{php_bin}'"
         else
-          capifony_pretty_print "--> Updating Composer by Lt."
+          capifony_pretty_print "--> Updating Composer"
 
           run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && #{php_bin} composer.phar self-update'"
         end
@@ -183,7 +183,7 @@ namespace :symfony do
       end
 
       capifony_pretty_print "--> Dumping an optimized autoloader"
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} dump-autoload #{composer_dump_autoload_options}'"
+      run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && #{composer_bin} dump-autoload #{composer_dump_autoload_options}'"
       capifony_puts_ok
     end
 
@@ -222,7 +222,7 @@ namespace :symfony do
           capifony_pretty_print "--> Warming up cache"
         end
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} cache:#{action.to_s} #{console_options}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && #{php_bin} #{symfony_console} cache:#{action.to_s} #{console_options}'"
         run "#{try_sudo} chmod -R g+w #{latest_release}/#{cache_path}"
         capifony_puts_ok
       end
@@ -234,7 +234,7 @@ namespace :symfony do
     task :clear_controllers, :roles => :app, :except => { :no_release => true } do
       capifony_pretty_print "--> Clear controllers"
 
-      command = "#{try_sudo} sh -c 'cd #{latest_release} && rm -f"
+      command = "#{try_sudo} sh -c 'cd #{latest_release}#{release_subfolder} && rm -f"
       controllers_to_clear.each do |link|
         command += " #{web_path}/" + link
       end
